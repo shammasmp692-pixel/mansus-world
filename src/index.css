@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+@theme {
+  --color-navy: #101B2D;
+  --color-navy-light: #1a2a42;
+  --color-navy-dark: #0a1120;
+  --color-ivory: #F8F7F3;
+  --color-gold: #C6A66B;
+  --color-gold-light: #d4b97e;
+  --color-gold-dark: #b08f55;
+  --color-charcoal: #222222;
+  --color-charcoal-light: #333333;
+
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-navy);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-gold);
+  border-radius: 4px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-charcoal);
+  background-color: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Fade in animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animation-delay-200 {
+  animation-delay: 0.2s;
+}
+.animation-delay-400 {
+  animation-delay: 0.4s;
+}
+.animation-delay-600 {
+  animation-delay: 0.6s;
+}
+
+/* Hero parallax subtle zoom */
+@keyframes subtleZoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.05); }
+}
+
+.animate-subtle-zoom {
+  animation: subtleZoom 20s ease-in-out infinite alternate;
+}
+
+/* Gradient text */
+.text-gradient-gold {
+  background: linear-gradient(135deg, #C6A66B 0%, #d4b97e 50%, #C6A66B 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
