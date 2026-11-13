@@ -46,15 +46,15 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           {/* Brand Logo */}
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-full border border-[#C5A869]/70 flex items-center justify-center bg-[#0E1B2E] group-hover:border-[#C5A869] transition-colors">
-              <Compass className="w-5 h-5 text-[#C5A869] group-hover:rotate-45 transition-transform duration-500" />
+          <Link to="/" className="flex items-center gap-2 sm:gap-3 group shrink-0">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border border-[#C5A869]/70 flex items-center justify-center bg-[#0E1B2E] group-hover:border-[#C5A869] transition-colors shrink-0">
+              <Compass className="w-4 h-4 sm:w-5 sm:h-5 text-[#C5A869] group-hover:rotate-45 transition-transform duration-500" />
             </div>
             <div className="flex flex-col">
-              <span className="font-serif text-xl sm:text-2xl font-bold tracking-wider text-white group-hover:text-[#C5A869] transition-colors">
+              <span className="font-serif text-base sm:text-xl md:text-2xl font-bold tracking-wider text-white group-hover:text-[#C5A869] transition-colors whitespace-nowrap">
                 MANSU'S WORLD
               </span>
-              <span className="text-[9px] tracking-[0.28em] text-[#C5A869] font-medium uppercase -mt-0.5">
+              <span className="text-[7.5px] sm:text-[9px] tracking-[0.22em] sm:tracking-[0.28em] text-[#C5A869] font-medium uppercase -mt-0.5">
                 TRAVEL & TOURISM
               </span>
             </div>

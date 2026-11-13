@@ -169,7 +169,7 @@ export default function CategoryPage() {
                 </div>
 
                 {/* Body Content */}
-                <div className="p-7 flex-1 flex flex-col justify-between">
+                <div className="p-5 sm:p-7 flex-1 flex flex-col justify-between">
                   <div>
                     <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#0E1B2E] group-hover:text-[#C5A869] transition-colors leading-snug mb-3">
                       <Link to={`/package/${pkg.slug}`}>
@@ -196,7 +196,7 @@ export default function CategoryPage() {
                   </div>
 
                   {/* Pricing and Action Buttons */}
-                  <div className="pt-5 border-t border-gray-100 flex items-center justify-between">
+                  <div className="pt-4 sm:pt-5 border-t border-gray-100 flex flex-wrap sm:flex-nowrap items-center justify-between gap-3">
                     <div>
                       <span className="text-[11px] text-gray-400 uppercase tracking-wider block font-medium mb-0.5">
                         Starting From
@@ -206,10 +206,10 @@ export default function CategoryPage() {
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 shrink-0">
                       <Link
                         to={`/package/${pkg.slug}`}
-                        className="px-4 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider text-[#0E1B2E] hover:bg-[#FAF9F6] border border-gray-200 transition-colors"
+                        className="px-3.5 sm:px-4 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider text-[#0E1B2E] hover:bg-[#FAF9F6] border border-gray-200 transition-colors"
                       >
                         Details
                       </Link>
@@ -220,7 +220,7 @@ export default function CategoryPage() {
                         })}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-4 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider bg-[#25D366] hover:bg-[#20ba59] text-white flex items-center gap-1.5 shadow-md transition-all duration-300 transform hover:scale-105"
+                        className="px-3.5 sm:px-4 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider bg-[#25D366] hover:bg-[#20ba59] text-white flex items-center gap-1.5 shadow-md transition-all duration-300 transform hover:scale-105"
                       >
                         <MessageCircle className="w-4 h-4 fill-white" />
                         <span>Book</span>

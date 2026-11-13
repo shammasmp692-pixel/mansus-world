@@ -65,15 +65,15 @@ export default function CurrencySelector({ variant = 'navbar' }: CurrencySelecto
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-white/20 hover:border-[#C5A869]/80 bg-white/5 hover:bg-white/10 text-white text-xs font-semibold tracking-wider transition-all duration-200 cursor-pointer focus:outline-none"
+        className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-full border border-white/20 hover:border-[#C5A869]/80 bg-white/5 hover:bg-white/10 text-white text-xs font-semibold tracking-wider transition-all duration-200 cursor-pointer focus:outline-none shrink-0"
         aria-haspopup="true"
         aria-expanded={isOpen}
       >
-        <span className="text-sm leading-none">{currencyConfig.flag}</span>
-        <span className="text-white font-medium">{currencyConfig.code}</span>
-        <span className="text-[#C5A869] text-[11px] font-bold">({currencyConfig.symbol})</span>
+        <span className="text-xs sm:text-sm leading-none">{currencyConfig.flag}</span>
+        <span className="text-white font-medium text-[11px] sm:text-xs">{currencyConfig.code}</span>
+        <span className="text-[#C5A869] text-[10px] sm:text-[11px] font-bold hidden xs:inline">({currencyConfig.symbol})</span>
         <ChevronDown
-          className={`w-3.5 h-3.5 text-[#C5A869] transition-transform duration-200 ${
+          className={`w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#C5A869] transition-transform duration-200 ${
             isOpen ? 'rotate-180' : ''
           }`}
         />

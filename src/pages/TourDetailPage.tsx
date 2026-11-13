@@ -62,7 +62,7 @@ export default function TourDetailPage() {
   };
 
   return (
-    <div className="bg-[#FAF9F6] min-h-screen">
+    <div className="bg-[#FAF9F6] min-h-screen pb-20 lg:pb-0">
       {/* Hero Header */}
       <section className="relative h-[52vh] min-h-[400px] bg-[#0E1B2E] flex items-end overflow-hidden">
         <img

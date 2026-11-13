@@ -138,17 +138,17 @@ export default function HomePage() {
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-[#C5A869]/10 rounded-full blur-[140px] pointer-events-none" />
 
         {/* Hero Main Content */}
-        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-32 pb-24 md:pt-40 md:pb-28">
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-24 pb-16 sm:pt-32 sm:pb-24 md:pt-40 md:pb-28">
           {/* Brand Identity Pill */}
-          <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-white/10 backdrop-blur-xl border border-[#C5A869]/50 mb-8 shadow-xl shadow-black/30 animate-fade-in">
-            <Compass className="w-4 h-4 text-[#C5A869] animate-spin" style={{ animationDuration: '20s' }} />
-            <span className="text-xs sm:text-sm uppercase tracking-[0.28em] text-[#E5C378] font-semibold">
+          <div className="inline-flex items-center gap-2 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-full bg-white/10 backdrop-blur-xl border border-[#C5A869]/50 mb-6 sm:mb-8 shadow-xl shadow-black/30 animate-fade-in">
+            <Compass className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#C5A869] animate-spin" style={{ animationDuration: '20s' }} />
+            <span className="text-[10px] sm:text-xs md:text-sm uppercase tracking-[0.22em] sm:tracking-[0.28em] text-[#E5C378] font-semibold">
               Mansu's World • Travel & Tourism
             </span>
           </div>
 
           {/* Master Headline Required by Specification */}
-          <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white tracking-tight leading-[1.08] mb-6 drop-shadow-2xl">
+          <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold text-white tracking-tight leading-[1.12] sm:leading-[1.08] mb-4 sm:mb-6 drop-shadow-2xl">
             Discover Dubai.
             <br />
             <span className="text-gold-gradient italic font-normal">
@@ -157,15 +157,15 @@ export default function HomePage() {
           </h1>
 
           {/* Supporting Text Required by Specification */}
-          <p className="max-w-3xl mx-auto text-base sm:text-lg md:text-xl text-white/90 font-light leading-relaxed mb-10 drop-shadow-md">
+          <p className="max-w-3xl mx-auto text-sm sm:text-base md:text-lg lg:text-xl text-white/90 font-light leading-relaxed mb-8 sm:mb-10 drop-shadow-md px-2">
             Explore unforgettable journeys, exceptional experiences and carefully designed Dubai holiday packages.
           </p>
 
           {/* Hero CTAs */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5 mb-14">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-5 mb-10 sm:mb-14 w-full sm:w-auto">
             <a
               href="#featured-packages"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-3 gold-gradient-bg hover:brightness-110 text-[#070F1B] font-bold text-xs sm:text-sm uppercase tracking-wider px-9 py-4 rounded-full shadow-xl shadow-[#C5A869]/25 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-0.5"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-3 gold-gradient-bg hover:brightness-110 text-[#070F1B] font-bold text-xs sm:text-sm uppercase tracking-wider px-8 sm:px-9 py-3.5 sm:py-4 rounded-full shadow-xl shadow-[#C5A869]/25 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-0.5"
             >
               <span>Explore Packages</span>
               <ArrowRight className="w-4 h-4" />
@@ -178,7 +178,7 @@ export default function HomePage() {
               })}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-white/10 hover:bg-white/20 text-white border border-white/40 backdrop-blur-xl font-semibold text-xs sm:text-sm uppercase tracking-wider px-9 py-4 rounded-full transition-all duration-300 shadow-lg hover:border-[#C5A869]"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-white/10 hover:bg-white/20 text-white border border-white/40 backdrop-blur-xl font-semibold text-xs sm:text-sm uppercase tracking-wider px-8 sm:px-9 py-3.5 sm:py-4 rounded-full transition-all duration-300 shadow-lg hover:border-[#C5A869]"
             >
               <MessageCircle className="w-4 h-4 text-[#25D366] fill-[#25D366]" />
               <span>Plan Your Journey</span>
@@ -186,22 +186,22 @@ export default function HomePage() {
           </div>
 
           {/* Value Props Row */}
-          <div className="pt-8 border-t border-white/15 max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-            <div className="p-3">
-              <p className="font-serif text-xl sm:text-2xl font-bold text-white">100% Curated</p>
-              <p className="text-[11px] text-white/70 tracking-wider uppercase mt-1">Private Pacing & Comfort</p>
+          <div className="pt-6 sm:pt-8 border-t border-white/15 max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 text-center">
+            <div className="p-2 sm:p-3">
+              <p className="font-serif text-lg sm:text-2xl font-bold text-white">100% Curated</p>
+              <p className="text-[10px] sm:text-[11px] text-white/70 tracking-wider uppercase mt-1">Private Pacing & Comfort</p>
             </div>
-            <div className="p-3">
-              <p className="font-serif text-xl sm:text-2xl font-bold text-[#C5A869]">Dubai Specialists</p>
-              <p className="text-[11px] text-white/70 tracking-wider uppercase mt-1">Iconic Sights & Secret Gems</p>
+            <div className="p-2 sm:p-3">
+              <p className="font-serif text-lg sm:text-2xl font-bold text-[#C5A869]">Dubai Specialists</p>
+              <p className="text-[10px] sm:text-[11px] text-white/70 tracking-wider uppercase mt-1">Iconic Sights & Secret Gems</p>
             </div>
-            <div className="p-3">
-              <p className="font-serif text-xl sm:text-2xl font-bold text-white">24/7 Concierge</p>
-              <p className="text-[11px] text-white/70 tracking-wider uppercase mt-1">Direct WhatsApp Desk</p>
+            <div className="p-2 sm:p-3">
+              <p className="font-serif text-lg sm:text-2xl font-bold text-white">24/7 Concierge</p>
+              <p className="text-[10px] sm:text-[11px] text-white/70 tracking-wider uppercase mt-1">Direct WhatsApp Desk</p>
             </div>
-            <div className="p-3">
-              <p className="font-serif text-xl sm:text-2xl font-bold text-[#C5A869]">Clear Pricing</p>
-              <p className="text-[11px] text-white/70 tracking-wider uppercase mt-1">INR • AED • USD</p>
+            <div className="p-2 sm:p-3">
+              <p className="font-serif text-lg sm:text-2xl font-bold text-[#C5A869]">Clear Pricing</p>
+              <p className="text-[10px] sm:text-[11px] text-white/70 tracking-wider uppercase mt-1">INR • AED • USD</p>
             </div>
           </div>
         </div>
@@ -459,7 +459,7 @@ export default function HomePage() {
                 </div>
 
                 {/* Package Card Details */}
-                <div className="p-7 flex-1 flex flex-col justify-between">
+                <div className="p-5 sm:p-7 flex-1 flex flex-col justify-between">
                   <div>
                     <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#0E1B2E] group-hover:text-[#C5A869] transition-colors leading-snug mb-3">
                       <Link to={`/package/${pkg.slug}`}>
@@ -482,7 +482,7 @@ export default function HomePage() {
                   </div>
 
                   {/* Price and Action Buttons */}
-                  <div className="pt-5 border-t border-gray-100 flex items-center justify-between">
+                  <div className="pt-4 sm:pt-5 border-t border-gray-100 flex flex-wrap sm:flex-nowrap items-center justify-between gap-3">
                     <div>
                       <span className="text-[11px] text-gray-400 uppercase tracking-wider block font-medium mb-0.5">
                         Starting From
@@ -493,10 +493,10 @@ export default function HomePage() {
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 shrink-0">
                       <Link
                         to={`/package/${pkg.slug}`}
-                        className="px-4 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider text-[#0E1B2E] hover:bg-[#FAF9F6] border border-gray-200 transition-colors"
+                        className="px-3.5 sm:px-4 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider text-[#0E1B2E] hover:bg-[#FAF9F6] border border-gray-200 transition-colors"
                       >
                         Details
                       </Link>
@@ -507,7 +507,7 @@ export default function HomePage() {
                         })}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-4 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider bg-[#25D366] hover:bg-[#20ba59] text-white flex items-center gap-1.5 shadow-md transition-all duration-300 transform hover:scale-105"
+                        className="px-3.5 sm:px-4 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider bg-[#25D366] hover:bg-[#20ba59] text-white flex items-center gap-1.5 shadow-md transition-all duration-300 transform hover:scale-105"
                       >
                         <MessageCircle className="w-4 h-4 fill-white" />
                         <span>Book</span>
