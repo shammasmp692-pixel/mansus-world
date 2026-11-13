@@ -1,17 +1,12 @@
-import { useState, useRef, useEffect, type ReactNode } from 'react';
+import { useState, useRef, type ReactNode } from 'react';
 import {
   Monitor,
   Smartphone,
   Tablet,
-  Laptop,
   RotateCw,
-  ChevronDown,
   RefreshCw,
-  ExternalLink,
   Minimize2,
-  Maximize2,
-  Sliders,
-  Check
+  Maximize2
 } from 'lucide-react';
 
 interface DevicePreset {
@@ -23,20 +18,17 @@ interface DevicePreset {
   label: string;
 }
 
-const ALL_PRESETS: DevicePreset[] = [
-  // Mobile Presets
-  { id: 'mobile-sm', name: 'Small Mobile', category: 'mobile', width: 320, height: 568, label: '320 × 568 (iPhone SE)' },
-  { id: 'mobile-std', name: 'Standard Mobile', category: 'mobile', width: 375, height: 667, label: '375 × 667 (iPhone 8/SE2)' },
-  { id: 'mobile-modern', name: 'Modern Mobile', category: 'mobile', width: 390, height: 844, label: '390 × 844 (iPhone 14/15)' },
-  { id: 'mobile-lg', name: 'Large Mobile', category: 'mobile', width: 430, height: 932, label: '430 × 932 (iPhone Pro Max)' },
-  // Tablet Presets
-  { id: 'tablet-std', name: 'Tablet', category: 'tablet', width: 768, height: 1024, label: '768 × 1024 (iPad Air/Mini)' },
-  { id: 'tablet-lg', name: 'Large Tablet', category: 'tablet', width: 1024, height: 1366, label: '1024 × 1366 (iPad Pro)' },
-  // Laptop & Desktop Presets
-  { id: 'laptop-1366', name: 'Laptop', category: 'desktop', width: 1366, height: 768, label: '1366 × 768 (Laptop)' },
-  { id: 'desktop-1440', name: 'Desktop', category: 'desktop', width: 1440, height: 900, label: '1440 × 900 (Desktop)' },
-  { id: 'desktop-1920', name: 'Large Desktop', category: 'desktop', width: 1920, height: 1080, label: '1920 × 1080 (Full HD)' },
-  { id: 'desktop-fluid', name: 'Fluid Window', category: 'desktop', width: 0, height: 0, label: '100% Fluid Width' },
+const PRESETS: Record<'desktop' | 'mobile' | 'tablet', DevicePreset> = {
+  desktop: { id: 'desktop', name: 'Desktop', category: 'desktop', width: 0, height: 0, label: '100% Fluid Width' },
+  mobile: { id: 'mobile', name: 'Mobile', category: 'mobile', width: 390, height: 844, label: '390 × 844 (iPhone 14/15)' },
+  tablet: { id: 'tablet', name: 'Tablet', category: 'tablet', width: 768, height: 1024, label: '768 × 1024 (iPad Air)' },
+};
+
+const MOBILE_SIZES = [
+  { id: '320', name: 'Small', width: 320, height: 568 },
+  { id: '375', name: 'Standard', width: 375, height: 667 },
+  { id: '390', name: 'Modern', width: 390, height: 844 },
+  { id: '430', name: 'Large', width: 430, height: 932 },
 ];
 
 export default function DevPreviewToolbar({ children }: { children: ReactNode }) {
@@ -50,13 +42,12 @@ export default function DevPreviewToolbar({ children }: { children: ReactNode })
     return <>{children}</>;
   }
 
-  // Active viewing mode: 'desktop' or 'mobile-tablet'
-  const [viewMode, setViewMode] = useState<'desktop' | 'mobile-tablet'>('desktop');
-  // Selected preset for mobile/tablet mode (defaults to Modern Mobile 390px)
-  const [mobilePreset, setMobilePreset] = useState<DevicePreset>(ALL_PRESETS[2]);
-  // Selected preset for desktop mode (defaults to 100% Fluid)
-  const [desktopPreset, setDesktopPreset] = useState<DevicePreset>(ALL_PRESETS[9]);
-  // Orientation: portrait or landscape (for mobile/tablet)
+  // Active view: 'desktop' | 'mobile' | 'tablet'
+  const [activeDevice, setActiveDevice] = useState<'desktop' | 'mobile' | 'tablet'>('desktop');
+  // Sub-preset for mobile width testing
+  const [mobileWidth, setMobileWidth] = useState(390);
+  const [mobileHeight, setMobileHeight] = useState(844);
+  // Orientation toggle (Portrait / Landscape)
   const [isLandscape, setIsLandscape] = useState(false);
   // Toolbar collapse state
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -64,12 +55,19 @@ export default function DevPreviewToolbar({ children }: { children: ReactNode })
   const [iframeKey, setIframeKey] = useState(0);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  // Active dimensions based on mode and orientation
-  const currentPreset = viewMode === 'desktop' ? desktopPreset : mobilePreset;
-  const activeWidth = isLandscape && currentPreset.height > 0 ? currentPreset.height : currentPreset.width;
-  const activeHeight = isLandscape && currentPreset.height > 0 ? currentPreset.width : currentPreset.height;
+  // Compute active dimensions
+  let currentWidth = 0;
+  let currentHeight = 0;
 
-  // Helper to generate iframe source with recursion safeguard
+  if (activeDevice === 'mobile') {
+    currentWidth = isLandscape ? mobileHeight : mobileWidth;
+    currentHeight = isLandscape ? mobileWidth : mobileHeight;
+  } else if (activeDevice === 'tablet') {
+    currentWidth = isLandscape ? PRESETS.tablet.height : PRESETS.tablet.width;
+    currentHeight = isLandscape ? PRESETS.tablet.width : PRESETS.tablet.height;
+  }
+
+  // Generate iframe source with recursion safeguard
   const getIframeSrc = () => {
     if (typeof window === 'undefined') return '/?preview_frame=true';
     try {
@@ -81,170 +79,152 @@ export default function DevPreviewToolbar({ children }: { children: ReactNode })
     }
   };
 
-  const handleModeSwitch = (mode: 'desktop' | 'mobile-tablet') => {
-    setViewMode(mode);
-    if (mode === 'desktop') {
-      setDesktopPreset(ALL_PRESETS[9]); // Fluid full width
-    } else {
-      setMobilePreset(ALL_PRESETS[2]); // Modern Mobile 390px
-    }
+  const handleDeviceSwitch = (device: 'desktop' | 'mobile' | 'tablet') => {
+    setActiveDevice(device);
+    setIsLandscape(false);
   };
 
-  const handleReloadIframe = () => {
-    setIframeKey((prev) => prev + 1);
+  const handleMobileSizeChange = (width: number, height: number) => {
+    setMobileWidth(width);
+    setMobileHeight(height);
   };
 
   return (
     <div className="relative min-h-screen bg-[#070F1B]">
       {/* ======================================================== */}
-      {/* 1. PROFESSIONAL RESPONSIVE DEV TOOLBAR (FIXED TOP)       */}
+      {/* 1. COMPACT PREMIUM SEGMENTED PILL SWITCHER (TOP)         */}
       {/* ======================================================== */}
       <aside
-        aria-label="Responsive Device Preview Toolbar"
-        className={`fixed top-0 inset-x-0 z-[9999] transition-all duration-300 font-sans shadow-2xl ${
-          isCollapsed ? 'translate-y-[-100%]' : 'translate-y-0'
+        aria-label="Device View Switcher"
+        className={`fixed top-3 inset-x-0 z-[9999] flex justify-center px-4 transition-all duration-300 pointer-events-none ${
+          isCollapsed ? 'translate-y-[-120%] opacity-0' : 'translate-y-0 opacity-100'
         }`}
       >
-        <div className="bg-[#09121E]/98 backdrop-blur-2xl border-b border-[#C5A869]/30 text-white px-3 sm:px-6 py-2 flex items-center justify-between gap-3 text-xs">
-          {/* Left: Branding & Status */}
-          <div className="flex items-center gap-2.5 shrink-0">
-            <span className="flex h-2 w-2 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-            </span>
-            <span className="font-serif font-bold text-sm tracking-wider text-[#E5C378] hidden sm:inline">
+        <div className="pointer-events-auto bg-[#09121E]/95 backdrop-blur-2xl border border-[#C5A869]/40 rounded-full px-2 py-1.5 shadow-[0_10px_35px_rgba(0,0,0,0.7)] flex items-center gap-2 text-xs font-sans text-white">
+          {/* Brand Mark */}
+          <div className="hidden sm:flex items-center gap-2 pl-2 pr-1 shrink-0">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="font-serif font-bold text-xs tracking-wider text-[#E5C378]">
               MANSU'S WORLD
             </span>
-            <span className="px-2 py-0.5 rounded-full bg-white/10 text-[10px] uppercase tracking-wider font-semibold text-gray-300 border border-white/10">
-              Device Preview Toolbar
-            </span>
           </div>
 
-          {/* Center: Two Required Viewing Options */}
-          <div className="flex items-center gap-1 bg-[#060D17] p-1 rounded-xl border border-white/10 shadow-inner">
-            {/* Option 1: 🖥️ Desktop Preview */}
+          <div className="h-4 w-[1px] bg-white/15 hidden sm:block" />
+
+          {/* Segmented Pill Control: [ Desktop ] [ Mobile ] [ Tablet ] */}
+          <div className="flex items-center bg-[#060D17] p-1 rounded-full border border-white/10 shadow-inner">
+            {/* Desktop Option */}
             <button
-              onClick={() => handleModeSwitch('desktop')}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer ${
-                viewMode === 'desktop'
-                  ? 'bg-[#C5A869] text-[#070F1B] shadow-md shadow-[#C5A869]/30'
+              onClick={() => handleDeviceSwitch('desktop')}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer ${
+                activeDevice === 'desktop'
+                  ? 'bg-[#C5A869] text-[#070F1B] shadow-md shadow-[#C5A869]/40 scale-[1.02]'
                   : 'text-gray-300 hover:text-white hover:bg-white/5'
               }`}
-              title="Switch to Desktop Preview"
+              title="Full Desktop Experience"
             >
               <Monitor className="w-3.5 h-3.5" />
-              <span>🖥️ Desktop Preview</span>
+              <span>Desktop</span>
             </button>
 
-            {/* Option 2: 📱 Mobile / Tablet Preview */}
+            {/* Mobile Option */}
             <button
-              onClick={() => handleModeSwitch('mobile-tablet')}
-              className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer ${
-                viewMode === 'mobile-tablet'
-                  ? 'bg-[#C5A869] text-[#070F1B] shadow-md shadow-[#C5A869]/30'
+              onClick={() => handleDeviceSwitch('mobile')}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer ${
+                activeDevice === 'mobile'
+                  ? 'bg-[#C5A869] text-[#070F1B] shadow-md shadow-[#C5A869]/40 scale-[1.02]'
                   : 'text-gray-300 hover:text-white hover:bg-white/5'
               }`}
-              title="Switch to Mobile / Tablet Viewport Simulator"
+              title="Dedicated Mobile Experience"
             >
               <Smartphone className="w-3.5 h-3.5" />
-              <span>📱 Mobile / Tablet Preview</span>
+              <span>Mobile</span>
             </button>
-          </div>
 
-          {/* Right: Device Selector, Dimensions, Orientation, & Collapse */}
-          <div className="flex items-center gap-2 shrink-0">
-            {viewMode === 'mobile-tablet' && (
-              <div className="flex items-center gap-2">
-                {/* Mobile / Tablet Screen Size Presets Dropdown */}
-                <select
-                  value={mobilePreset.id}
-                  onChange={(e) => {
-                    const preset = ALL_PRESETS.find((p) => p.id === e.target.value);
-                    if (preset) setMobilePreset(preset);
-                  }}
-                  className="bg-[#060D17] border border-white/20 text-[#E5C378] text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#C5A869] cursor-pointer"
-                >
-                  <optgroup label="Mobile Phones">
-                    {ALL_PRESETS.filter((p) => p.category === 'mobile').map((p) => (
-                      <option key={p.id} value={p.id}>
-                        📱 {p.name} ({p.width}px)
-                      </option>
-                    ))}
-                  </optgroup>
-                  <optgroup label="Tablets">
-                    {ALL_PRESETS.filter((p) => p.category === 'tablet').map((p) => (
-                      <option key={p.id} value={p.id}>
-                        📟 {p.name} ({p.width}px)
-                      </option>
-                    ))}
-                  </optgroup>
-                </select>
-
-                {/* Accurate Screen Dimensions Pill */}
-                <span className="hidden md:inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-gray-200">
-                  <span className="text-[#C5A869]">{activeWidth}</span>
-                  <span className="text-gray-500">×</span>
-                  <span className="text-[#C5A869]">{activeHeight}</span>
-                  <span className="text-[9px] text-gray-400">px</span>
-                </span>
-
-                {/* Rotate Orientation Button */}
-                <button
-                  onClick={() => setIsLandscape(!isLandscape)}
-                  className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
-                    isLandscape
-                      ? 'bg-[#C5A869] text-[#070F1B] border-[#C5A869]'
-                      : 'bg-white/5 text-gray-300 hover:text-white border-white/10 hover:bg-white/10'
-                  }`}
-                  title={isLandscape ? 'Switch to Portrait' : 'Switch to Landscape'}
-                >
-                  <RotateCw className="w-3.5 h-3.5" />
-                </button>
-
-                {/* Reload Viewport */}
-                <button
-                  onClick={handleReloadIframe}
-                  className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 transition-colors cursor-pointer"
-                  title="Reload Preview Frame"
-                >
-                  <RefreshCw className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            )}
-
-            {viewMode === 'desktop' && (
-              <div className="flex items-center gap-2">
-                {/* Desktop Size Presets */}
-                <select
-                  value={desktopPreset.id}
-                  onChange={(e) => {
-                    const preset = ALL_PRESETS.find((p) => p.id === e.target.value);
-                    if (preset) setDesktopPreset(preset);
-                  }}
-                  className="bg-[#060D17] border border-white/20 text-[#E5C378] text-xs font-semibold rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-[#C5A869] cursor-pointer"
-                >
-                  {ALL_PRESETS.filter((p) => p.category === 'desktop').map((p) => (
-                    <option key={p.id} value={p.id}>
-                      🖥️ {p.name} {p.width > 0 ? `(${p.width}px)` : '(Full)'}
-                    </option>
-                  ))}
-                </select>
-
-                <span className="hidden md:inline-flex items-center px-2.5 py-1 rounded-md bg-white/5 border border-white/10 font-mono text-[11px] text-[#C5A869]">
-                  {desktopPreset.width === 0 ? '100% Fluid Width' : `${desktopPreset.width} × ${desktopPreset.height} px`}
-                </span>
-              </div>
-            )}
-
-            {/* Minimize / Collapse Button */}
+            {/* Tablet Option */}
             <button
-              onClick={() => setIsCollapsed(true)}
-              className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white border border-white/10 transition-colors cursor-pointer"
-              title="Minimize Toolbar"
+              onClick={() => handleDeviceSwitch('tablet')}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer ${
+                activeDevice === 'tablet'
+                  ? 'bg-[#C5A869] text-[#070F1B] shadow-md shadow-[#C5A869]/40 scale-[1.02]'
+                  : 'text-gray-300 hover:text-white hover:bg-white/5'
+              }`}
+              title="Balanced Tablet Experience"
             >
-              <Minimize2 className="w-3.5 h-3.5" />
+              <Tablet className="w-3.5 h-3.5" />
+              <span>Tablet</span>
             </button>
           </div>
+
+          {/* Mobile Width Quick Picker */}
+          {activeDevice === 'mobile' && (
+            <div className="flex items-center gap-1 pl-1">
+              {MOBILE_SIZES.map((sz) => (
+                <button
+                  key={sz.id}
+                  onClick={() => handleMobileSizeChange(sz.width, sz.height)}
+                  className={`px-2 py-1 rounded-md text-[10px] font-mono transition-all cursor-pointer ${
+                    mobileWidth === sz.width
+                      ? 'bg-white/20 text-[#E5C378] font-bold border border-[#C5A869]/60'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                  title={`${sz.name} (${sz.width}px)`}
+                >
+                  {sz.width}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Dimension Tag */}
+          <div className="hidden md:flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 font-mono text-[11px] text-gray-300">
+            {activeDevice === 'desktop' ? (
+              <span className="text-[#C5A869]">100% Fluid Desktop</span>
+            ) : (
+              <>
+                <span className="text-[#C5A869]">{currentWidth}</span>
+                <span className="text-gray-500">×</span>
+                <span className="text-[#C5A869]">{currentHeight}</span>
+                <span className="text-[10px] text-gray-400">px</span>
+              </>
+            )}
+          </div>
+
+          {/* Device Action Buttons */}
+          {activeDevice !== 'desktop' && (
+            <div className="flex items-center gap-1">
+              {/* Rotate Orientation Button */}
+              <button
+                onClick={() => setIsLandscape(!isLandscape)}
+                className={`p-1.5 rounded-full border transition-all cursor-pointer ${
+                  isLandscape
+                    ? 'bg-[#C5A869] text-[#070F1B] border-[#C5A869]'
+                    : 'bg-white/5 text-gray-300 hover:text-white border-white/10 hover:bg-white/10'
+                }`}
+                title={isLandscape ? 'Switch to Portrait' : 'Switch to Landscape'}
+              >
+                <RotateCw className="w-3.5 h-3.5" />
+              </button>
+
+              {/* Reload Frame Button */}
+              <button
+                onClick={() => setIframeKey((k) => k + 1)}
+                className="p-1.5 rounded-full bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 transition-colors cursor-pointer"
+                title="Reload Viewport"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+
+          {/* Minimize Button */}
+          <button
+            onClick={() => setIsCollapsed(true)}
+            className="p-1.5 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white border border-white/10 transition-colors cursor-pointer"
+            title="Minimize Switcher"
+          >
+            <Minimize2 className="w-3.5 h-3.5" />
+          </button>
         </div>
       </aside>
 
@@ -252,98 +232,62 @@ export default function DevPreviewToolbar({ children }: { children: ReactNode })
       {isCollapsed && (
         <button
           onClick={() => setIsCollapsed(false)}
-          className="fixed top-3 right-4 z-[9999] bg-[#070F1B]/95 text-[#C5A869] border border-[#C5A869]/40 hover:border-[#C5A869] px-3 py-1.5 rounded-full shadow-2xl backdrop-blur-md flex items-center gap-1.5 text-xs font-semibold cursor-pointer animate-fade-in"
-          title="Expand Development Toolbar"
+          className="fixed top-3 right-4 z-[9999] bg-[#09121E]/95 text-[#C5A869] border border-[#C5A869]/40 hover:border-[#C5A869] px-3.5 py-1.5 rounded-full shadow-2xl backdrop-blur-md flex items-center gap-2 text-xs font-semibold cursor-pointer animate-fade-in"
+          title="Open Device View Switcher"
         >
           <Maximize2 className="w-3 h-3" />
-          <span>Device Preview Toolbar</span>
+          <span>Device Switcher</span>
         </button>
       )}
 
       {/* ======================================================== */}
-      {/* 2. RESPONSIVE VIEWPORT STAGE                             */}
+      {/* 2. RESPONSIVE VIEWPORT CONTAINER                         */}
       {/* ======================================================== */}
-      <div className={`transition-all duration-300 ${!isCollapsed ? 'pt-[47px]' : 'pt-0'}`}>
-        {viewMode === 'desktop' && desktopPreset.width === 0 ? (
-          /* Fluid Desktop Mode: Full-screen native rendering */
+      <div className={`transition-all duration-300 ${!isCollapsed ? 'pt-14' : 'pt-0'}`}>
+        {activeDevice === 'desktop' ? (
+          /* Desktop Mode: Native 100% fluid full-width rendering */
           <div className="w-full min-h-screen bg-[#FAF9F6]">
             {children}
           </div>
-        ) : viewMode === 'desktop' && desktopPreset.width > 0 ? (
-          /* Fixed Desktop Width Mode (1366px, 1440px, 1920px) */
-          <div className="min-h-screen bg-[#070F1B] py-8 px-4 flex flex-col items-center justify-start overflow-x-auto">
-            <div className="mb-3 flex items-center gap-2 text-xs text-gray-400 bg-white/5 px-4 py-1 rounded-full border border-white/10">
-              <span className="text-[#C5A869] font-bold">{desktopPreset.name}</span>
-              <span>•</span>
-              <span className="font-mono text-gray-200">{desktopPreset.width} × {desktopPreset.height} px</span>
-            </div>
-
-            <div
-              style={{
-                width: `${desktopPreset.width}px`,
-                maxWidth: '100%',
-                height: `${desktopPreset.height}px`,
-                maxHeight: '88vh',
-              }}
-              className="bg-white rounded-2xl shadow-2xl border-4 border-[#1F2937] overflow-hidden flex flex-col"
-            >
-              <iframe
-                key={`desktop-${iframeKey}-${desktopPreset.id}`}
-                ref={iframeRef}
-                src={getIframeSrc()}
-                title="Desktop Viewport Preview"
-                className="w-full h-full border-none"
-              />
-            </div>
-          </div>
         ) : (
-          /* Mobile / Tablet Mode: Realistic Device Bezel & Frame with True Viewport Emulation */
+          /* Mobile or Tablet Mode: Realistic hardware chassis simulator */
           <div className="min-h-screen bg-[#070F1B] py-6 px-4 flex flex-col items-center justify-start overflow-x-auto">
-            {/* Device Info Tag */}
-            <div className="mb-3 flex items-center gap-2.5 text-xs text-gray-300 bg-white/5 px-4 py-1.5 rounded-full border border-white/10 shadow-lg">
-              <span className="text-[#C5A869] font-bold">{mobilePreset.name}</span>
-              <span className="text-gray-500">•</span>
-              <span className="font-mono text-white font-semibold">
-                {activeWidth} × {activeHeight} px
-              </span>
-              <span className="text-gray-500">•</span>
-              <span className="text-[11px] uppercase tracking-wider text-gray-400">
-                {isLandscape ? 'Landscape' : 'Portrait'}
-              </span>
-            </div>
-
-            {/* Realistic Hardware Frame Simulator */}
+            {/* Realistic Hardware Frame */}
             <div
               style={{
-                width: `${activeWidth}px`,
+                width: `${currentWidth}px`,
                 maxWidth: '100%',
-                height: `${activeHeight}px`,
+                height: `${currentHeight}px`,
                 maxHeight: '88vh',
               }}
-              className="relative bg-black rounded-[42px] shadow-[0_25px_70px_rgba(0,0,0,0.9)] border-[12px] border-[#1F2937] flex flex-col overflow-hidden transition-all duration-300 ring-1 ring-white/10"
+              className={`relative bg-black shadow-[0_30px_90px_rgba(0,0,0,0.95)] border-[#1C2636] flex flex-col overflow-hidden transition-all duration-300 ring-1 ring-white/10 ${
+                activeDevice === 'mobile'
+                  ? 'rounded-[46px] border-[12px]'
+                  : 'rounded-[32px] border-[10px]'
+              }`}
             >
-              {/* Dynamic Island / Speaker Notch Indicator */}
-              <div className="h-6 bg-[#1F2937] shrink-0 flex items-center justify-center relative z-20">
+              {/* Top Dynamic Island / Speaker Notch Indicator */}
+              <div className="h-6 bg-[#1C2636] shrink-0 flex items-center justify-center relative z-20">
                 <div className="w-24 h-3.5 bg-black rounded-full flex items-center justify-center gap-2 shadow-inner">
                   <div className="w-2 h-2 rounded-full bg-blue-950/80 border border-blue-900/60" />
                   <div className="w-8 h-1 rounded-full bg-white/20" />
                 </div>
               </div>
 
-              {/* Viewport Iframe Container: Provides true window.innerWidth & CSS @media query evaluation */}
+              {/* Viewport Iframe: Emulates true mobile window.innerWidth & CSS media queries */}
               <div className="flex-1 w-full bg-white overflow-hidden relative">
                 <iframe
-                  key={`mobile-${iframeKey}-${activeWidth}-${activeHeight}`}
+                  key={`${activeDevice}-${iframeKey}-${currentWidth}-${currentHeight}`}
                   ref={iframeRef}
                   src={getIframeSrc()}
-                  title="Mobile Viewport Preview"
+                  title={`${activeDevice} Viewport Preview`}
                   className="w-full h-full border-none"
                 />
               </div>
 
               {/* Bottom Home Indicator Bar */}
-              <div className="h-4 bg-[#1F2937] shrink-0 flex items-center justify-center relative z-20">
-                <div className="w-32 h-1 bg-white/30 rounded-full" />
+              <div className="h-4 bg-[#1C2636] shrink-0 flex items-center justify-center relative z-20">
+                <div className="w-28 h-1 bg-white/30 rounded-full" />
               </div>
             </div>
           </div>

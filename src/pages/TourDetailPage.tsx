@@ -28,6 +28,8 @@ export default function TourDetailPage() {
   const formRef = useRef<HTMLDivElement>(null);
   const [activeImage, setActiveImage] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [isItineraryExpanded, setIsItineraryExpanded] = useState(false);
+  const [isInclusionsExpanded, setIsInclusionsExpanded] = useState(false);
 
   // Booking Enquiry form state
   const [fullName, setFullName] = useState('');
@@ -168,34 +170,65 @@ export default function TourDetailPage() {
             {/* Day-Wise Itinerary */}
             {pkg.dayItinerary.length > 0 && (
               <div>
-                <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0E1B2E] mb-8">
-                  Day-Wise Itinerary
-                </h2>
-                <div className="space-y-6">
-                  {pkg.dayItinerary.map((dayItem) => (
-                    <div
-                      key={dayItem.day}
-                      className="bg-white border border-gray-200/80 rounded-2xl p-6 sm:p-7 shadow-sm"
-                    >
-                      <div className="flex items-center gap-3 mb-4">
-                        <span className="w-9 h-9 rounded-full bg-[#0E1B2E] text-[#C5A869] font-serif font-bold text-sm flex items-center justify-center shrink-0">
-                          D{dayItem.day}
-                        </span>
-                        <h3 className="font-serif text-xl font-bold text-[#0E1B2E]">
-                          Day {dayItem.day}: {dayItem.title}
-                        </h3>
-                      </div>
-
-                      <ul className="space-y-3 pl-4 border-l-2 border-[#C5A869]/30 ml-4">
-                        {dayItem.activities.map((act, aIdx) => (
-                          <li key={aIdx} className="text-sm text-gray-700 leading-relaxed font-light">
-                            {act}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="font-serif text-2xl sm:text-3xl font-bold text-[#0E1B2E]">
+                    Day-Wise Itinerary
+                  </h2>
+                  <span className="text-xs text-[#A88B4C] font-semibold bg-[#C5A869]/10 px-3 py-1 rounded-full">
+                    {pkg.dayItinerary.length} {pkg.dayItinerary.length === 1 ? 'Day Schedule' : 'Days'}
+                  </span>
                 </div>
+
+                <div className="space-y-4 sm:space-y-6">
+                  {pkg.dayItinerary.map((dayItem, idx) => {
+                    const isVisibleOnMobile = idx === 0 || isItineraryExpanded;
+                    return (
+                      <div
+                        key={dayItem.day}
+                        className={`bg-white border border-gray-200/80 rounded-2xl p-5 sm:p-7 shadow-sm transition-all ${
+                          !isVisibleOnMobile ? 'hidden lg:block' : 'block'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3 mb-4">
+                          <span className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#0E1B2E] text-[#C5A869] font-serif font-bold text-xs sm:text-sm flex items-center justify-center shrink-0">
+                            D{dayItem.day}
+                          </span>
+                          <h3 className="font-serif text-lg sm:text-xl font-bold text-[#0E1B2E]">
+                            Day {dayItem.day}: {dayItem.title}
+                          </h3>
+                        </div>
+
+                        <ul className="space-y-2.5 sm:space-y-3 pl-3 sm:pl-4 border-l-2 border-[#C5A869]/30 ml-3 sm:ml-4">
+                          {dayItem.activities.map((act, aIdx) => (
+                            <li key={aIdx} className="text-xs sm:text-sm text-gray-700 leading-relaxed font-light">
+                              {act}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Mobile Expand / Collapse Toggle */}
+                {pkg.dayItinerary.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => setIsItineraryExpanded(!isItineraryExpanded)}
+                    className="lg:hidden w-full mt-3 py-3 px-4 rounded-xl border border-[#C5A869]/40 bg-[#FAF9F6] text-[#0E1B2E] text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                  >
+                    <span>
+                      {isItineraryExpanded
+                        ? 'Collapse Itinerary'
+                        : `View Full ${pkg.dayItinerary.length}-Day Schedule`}
+                    </span>
+                    <ChevronDown
+                      className={`w-4 h-4 text-[#A88B4C] transition-transform duration-200 ${
+                        isItineraryExpanded ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+                )}
               </div>
             )}
 
@@ -220,38 +253,72 @@ export default function TourDetailPage() {
             </div>
 
             {/* Inclusions & Exclusions */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Inclusions */}
-              <div className="bg-white border border-gray-200 rounded-2xl p-6 sm:p-7 shadow-sm">
-                <h3 className="font-serif text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <Check className="w-5 h-5 text-green-600" />
-                  <span>Inclusions</span>
-                </h3>
-                <ul className="space-y-3">
-                  {pkg.included.map((inc, i) => (
-                    <li key={i} className="flex items-start gap-2.5 text-sm text-gray-700">
-                      <Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" />
-                      <span>{inc}</span>
-                    </li>
-                  ))}
-                </ul>
+            <div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+                {/* Inclusions */}
+                <div className="bg-white border border-gray-200 rounded-2xl p-5 sm:p-7 shadow-sm">
+                  <h3 className="font-serif text-lg sm:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <Check className="w-5 h-5 text-green-600" />
+                    <span>Inclusions</span>
+                  </h3>
+                  <ul className="space-y-2.5 sm:space-y-3">
+                    {pkg.included.map((inc, i) => {
+                      const isVisible = i < 3 || isInclusionsExpanded;
+                      return (
+                        <li
+                          key={i}
+                          className={`flex items-start gap-2.5 text-xs sm:text-sm text-gray-700 ${
+                            !isVisible ? 'hidden lg:flex' : 'flex'
+                          }`}
+                        >
+                          <Check className="w-4 h-4 text-green-600 shrink-0 mt-0.5" />
+                          <span>{inc}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+
+                {/* Exclusions */}
+                <div className="bg-white border border-gray-200 rounded-2xl p-5 sm:p-7 shadow-sm">
+                  <h3 className="font-serif text-lg sm:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <X className="w-5 h-5 text-red-500" />
+                    <span>Exclusions</span>
+                  </h3>
+                  <ul className="space-y-2.5 sm:space-y-3">
+                    {pkg.excluded.map((exc, i) => {
+                      const isVisible = i < 3 || isInclusionsExpanded;
+                      return (
+                        <li
+                          key={i}
+                          className={`flex items-start gap-2.5 text-xs sm:text-sm text-gray-600 ${
+                            !isVisible ? 'hidden lg:flex' : 'flex'
+                          }`}
+                        >
+                          <X className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+                          <span>{exc}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
               </div>
 
-              {/* Exclusions */}
-              <div className="bg-white border border-gray-200 rounded-2xl p-6 sm:p-7 shadow-sm">
-                <h3 className="font-serif text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <X className="w-5 h-5 text-red-500" />
-                  <span>Exclusions</span>
-                </h3>
-                <ul className="space-y-3">
-                  {pkg.excluded.map((exc, i) => (
-                    <li key={i} className="flex items-start gap-2.5 text-sm text-gray-600">
-                      <X className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
-                      <span>{exc}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {/* Mobile Inclusions Toggle */}
+              {(pkg.included.length > 3 || pkg.excluded.length > 3) && (
+                <button
+                  type="button"
+                  onClick={() => setIsInclusionsExpanded(!isInclusionsExpanded)}
+                  className="lg:hidden w-full mt-3 py-3 px-4 rounded-xl border border-gray-200 bg-white text-gray-700 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                >
+                  <span>{isInclusionsExpanded ? 'Show Fewer Inclusions' : 'View All Inclusions & Exclusions'}</span>
+                  <ChevronDown
+                    className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
+                      isInclusionsExpanded ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
+              )}
             </div>
 
             {/* Important Travel Information */}

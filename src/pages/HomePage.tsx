@@ -30,6 +30,7 @@ import {
 import { generateWhatsAppLink } from '../utils/whatsapp';
 import { useCurrency } from '../context/CurrencyContext';
 import { useScrollReveal, useParallax } from '../hooks/useScrollAnimation';
+import MobileHomePage from '../components/MobileHomePage';
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -105,7 +106,16 @@ export default function HomePage() {
   const consultReveal = useScrollReveal();
 
   return (
-    <div className="bg-[#FAF9F6] text-[#222222] overflow-hidden">
+    <>
+      {/* ======================================================== */}
+      {/* 📱 DEDICATED MOBILE-FIRST HOMEPAGE EXPERIENCE (< 768px)  */}
+      {/* ======================================================== */}
+      <MobileHomePage />
+
+      {/* ======================================================== */}
+      {/* 🖥️ DESKTOP & TABLET CINEMATIC STORYTELLING (≥ 768px)     */}
+      {/* ======================================================== */}
+      <div className="hidden md:block bg-[#FAF9F6] text-[#222222] overflow-hidden">
       {/* ======================================================== */}
       {/* 1. HERO SECTION — CINEMATIC FULL-SCREEN VIDEO OPENING    */}
       {/* ======================================================== */}
@@ -929,6 +939,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 }
