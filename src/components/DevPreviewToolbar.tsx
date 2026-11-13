@@ -40,14 +40,13 @@ const ALL_PRESETS: DevicePreset[] = [
 ];
 
 export default function DevPreviewToolbar({ children }: { children: ReactNode }) {
-  // If we are inside the preview iframe, DO NOT render the toolbar again!
-  const isInsideIframe = typeof window !== 'undefined' && window.self !== window.top;
-  if (isInsideIframe) {
-    return <>{children}</>;
-  }
+  // Prevent recursive toolbar rendering inside preview iframes
+  const isInsideIframe =
+    typeof window !== 'undefined' &&
+    (window.self !== window.top ||
+      new URLSearchParams(window.location.search).get('preview_frame') === 'true');
 
-  // Strictly disabled in production customer-facing builds
-  if (!import.meta.env.DEV) {
+  if (isInsideIframe) {
     return <>{children}</>;
   }
 
@@ -69,6 +68,18 @@ export default function DevPreviewToolbar({ children }: { children: ReactNode })
   const currentPreset = viewMode === 'desktop' ? desktopPreset : mobilePreset;
   const activeWidth = isLandscape && currentPreset.height > 0 ? currentPreset.height : currentPreset.width;
   const activeHeight = isLandscape && currentPreset.height > 0 ? currentPreset.width : currentPreset.height;
+
+  // Helper to generate iframe source with recursion safeguard
+  const getIframeSrc = () => {
+    if (typeof window === 'undefined') return '/?preview_frame=true';
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('preview_frame', 'true');
+      return url.pathname + url.search;
+    } catch {
+      return '/?preview_frame=true';
+    }
+  };
 
   const handleModeSwitch = (mode: 'desktop' | 'mobile-tablet') => {
     setViewMode(mode);
@@ -105,7 +116,7 @@ export default function DevPreviewToolbar({ children }: { children: ReactNode })
               MANSU'S WORLD
             </span>
             <span className="px-2 py-0.5 rounded-full bg-white/10 text-[10px] uppercase tracking-wider font-semibold text-gray-300 border border-white/10">
-              Dev Preview Toolbar
+              Device Preview Toolbar
             </span>
           </div>
 
@@ -279,7 +290,7 @@ export default function DevPreviewToolbar({ children }: { children: ReactNode })
               <iframe
                 key={`desktop-${iframeKey}-${desktopPreset.id}`}
                 ref={iframeRef}
-                src={typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/'}
+                src={getIframeSrc()}
                 title="Desktop Viewport Preview"
                 className="w-full h-full border-none"
               />
@@ -324,7 +335,7 @@ export default function DevPreviewToolbar({ children }: { children: ReactNode })
                 <iframe
                   key={`mobile-${iframeKey}-${activeWidth}-${activeHeight}`}
                   ref={iframeRef}
-                  src={typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/'}
+                  src={getIframeSrc()}
                   title="Mobile Viewport Preview"
                   className="w-full h-full border-none"
                 />
