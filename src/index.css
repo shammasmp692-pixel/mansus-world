@@ -1,30 +1,37 @@
 @import "tailwindcss";
 
 @theme {
-  --color-navy: #101B2D;
-  --color-navy-light: #1a2a42;
-  --color-navy-dark: #0a1120;
-  --color-ivory: #F8F7F3;
-  --color-gold: #C6A66B;
-  --color-gold-light: #d4b97e;
-  --color-gold-dark: #b08f55;
+  --color-navy: #0E1B2E;
+  --color-navy-dark: #070F1B;
+  --color-navy-light: #16263D;
+  --color-navy-surface: #102038;
+  --color-warm-white: #FAF9F6;
+  --color-sand: #EFE9DF;
+  --color-sand-light: #F6F3ED;
+  --color-sand-dark: #DDD4C3;
+  --color-gold: #C5A869;
+  --color-gold-light: #D4B776;
+  --color-gold-bright: #E5C378;
+  --color-gold-dark: #A88B4C;
   --color-charcoal: #222222;
-  --color-charcoal-light: #333333;
 
   --font-serif: 'Playfair Display', Georgia, serif;
-  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-/* Custom scrollbar */
+/* Custom Luxury Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--color-navy);
+  background: #070F1B;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-gold);
+  background: #C5A869;
   border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #D4B776;
 }
 
 html {
@@ -34,16 +41,39 @@ html {
 body {
   font-family: var(--font-sans);
   color: var(--color-charcoal);
-  background-color: #ffffff;
+  background-color: var(--color-warm-white);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
-/* Fade in animation */
+/* Luxury Glassmorphism Utilities */
+.glass-card-dark {
+  background: rgba(14, 27, 46, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(197, 168, 105, 0.2);
+}
+
+.glass-card-light {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.glass-dock {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 20px 40px -15px rgba(14, 27, 46, 0.25);
+}
+
+/* Keyframe Animations */
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(28px);
   }
   to {
     opacity: 1;
@@ -52,33 +82,64 @@ body {
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.8s ease-out forwards;
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.animation-delay-200 {
-  animation-delay: 0.2s;
-}
-.animation-delay-400 {
-  animation-delay: 0.4s;
-}
-.animation-delay-600 {
-  animation-delay: 0.6s;
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-/* Hero parallax subtle zoom */
+.animate-fade-in {
+  animation: fadeIn 1s ease forwards;
+}
+
 @keyframes subtleZoom {
-  from { transform: scale(1); }
-  to { transform: scale(1.05); }
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 .animate-subtle-zoom {
-  animation: subtleZoom 20s ease-in-out infinite alternate;
+  animation: subtleZoom 24s ease-in-out infinite;
 }
 
-/* Gradient text */
-.text-gradient-gold {
-  background: linear-gradient(135deg, #C6A66B 0%, #d4b97e 50%, #C6A66B 100%);
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-float {
+  animation: floatSlow 5s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.08); }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+/* Subtle Gold Shimmer Text */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #E5C378 0%, #C5A869 50%, #FAF0D6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+.gold-gradient-bg {
+  background: linear-gradient(135deg, #C5A869 0%, #D4B776 50%, #A88B4C 100%);
+}
+
+.gold-border-glow {
+  box-shadow: 0 0 25px rgba(197, 168, 105, 0.2);
+}
+
+/* Section Divider Accent */
+.gold-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #C5A869, transparent);
 }
