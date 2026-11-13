@@ -158,7 +158,7 @@ export default function DevPreviewToolbar({ children }: { children: ReactNode })
 
           {/* Mobile Width Quick Picker */}
           {activeDevice === 'mobile' && (
-            <div className="flex items-center gap-1 pl-1">
+            <div className="hidden sm:flex items-center gap-1 pl-1">
               {MOBILE_SIZES.map((sz) => (
                 <button
                   key={sz.id}

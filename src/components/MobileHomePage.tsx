@@ -573,11 +573,11 @@ export default function MobileHomePage() {
           </a>
 
           <a
-            href="tel:+971500000000"
+            href={`tel:${COMPANY_INFO.phonePlaceholder.replace(/\s+/g, '')}`}
             className="w-full flex items-center justify-center gap-2 border border-white/20 text-white font-semibold text-xs uppercase tracking-wider py-3.5 rounded-xl hover:bg-white/10"
           >
             <Phone className="w-4 h-4 text-[#C5A869]" />
-            <span>Call Travel Desk</span>
+            <span>Call Travel Desk ({COMPANY_INFO.phonePlaceholder})</span>
           </a>
         </div>
       </section>
@@ -597,3 +597,4 @@ export default function MobileHomePage() {
     </div>
   );
 }
+
